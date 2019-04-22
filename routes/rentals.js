@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 const Fawn = require('fawn');
 const express = require('express');
 const router = express.Router();
-
+const auth = require('../middleware/auth');
 
 Fawn.init(mongoose);
 
@@ -32,7 +32,7 @@ router.get('/:id', async (req, res) => {
 
 
 //POST
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const {
         error
     } = validate(req.body);
