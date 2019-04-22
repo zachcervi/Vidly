@@ -4,7 +4,7 @@ const {
 	Genre,
 	validate
 } = require('../models/genre');
-
+const auth = require('../middleware/auth');
 
 
 //GET
@@ -20,7 +20,8 @@ router.get('/:id', async (req, re) => {
 });
 
 //POST
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
+
 	const {
 		error
 	} = validate(req.body);
