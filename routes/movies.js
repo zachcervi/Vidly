@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-
+const admin = require('../middleware/admin');
 router.get('/', async (req, res) => {
     const movies = await Movie.find().sort('name');
     res.send(movies);
@@ -64,7 +64,7 @@ router.put('/:id', async (req, res) => {
     res.send(movie);
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', [auth, admin], async (req, res) => {
     const movie = await Movie.findByIdAndRemove(req.params.id);
 
     if (!movie) return res.status(404).send('The movie with the given ID was not found.');
