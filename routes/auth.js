@@ -7,11 +7,11 @@ const {
 const express = require('express');
 const router = express.Router();
 const _ = require('lodash');
-
+const asyncMiddleware = require('../middleware/async');
 
 
 //POST
-router.post('/', async (req, res) => {
+router.post('/', asyncMiddleware(async (req, res) => {
     const {
         error
     } = validate(req.body);
@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
 
     const token = user.generateAuthToken();
     res.send(token);
-});
+}));
 
 
 function validate(req) {
