@@ -1,34 +1,44 @@
-const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
+require('express-async-errors');
+
+
+
 const express = require('express');
-const genres = require('./routes/genres');
-const customers = require('./routes/customers');
-const movies = require('./routes/movies');
-const rentals = require('./routes/rentals');
-const users = require('./routes/users');
-const auth = require('./routes/auth');
+
 const app = express();
-const mongoose = require('mongoose');
-const config = require('config');
+require('./startup/routes')(app);
+require('./startup/db')();
+require('./startup/config')();
+require('./startup/validation')();
 
-if (!config.get('jwtPrivateKey')) {
-	console.log('FATAL ERROR: jwtPrivateKey is not defined.');
+process.on('uncaughtException', (ex) => {
+	console.log('UNCAUGHT EXCEPTION: ' + ex.message);
 	process.exit(1);
-}
-
-app.use(express.json());
-app.use('/api/genres', genres);
-app.use('/api/customers', customers);
-app.use('/api/movies', movies);
-app.use('/api/rentals', rentals);
-app.use('/api/users', users)
-app.use('/api/auth', auth);
-mongoose
-	.connect('mongodb://localhost/Vidly')
-	.then(() => console.log('Connecting to MongoDb...'))
-	.catch((err) => console.log('Could not connect to MongoDb...'));
+});
+process.on('unhandledRejection', (ex) => {
+	console.log('UNHANDLED REJECTION: ' + ex.message);
+	process.exit(1);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
 	console.log(`Listening on port ${port}....`);
 });
+
+
+//const winston = require('winston');
+// const logger = winston.createLogger({
+// 	level: 'Error',
+// 	transports: [
+// 		new winston.transports.Console(),
+// 		new winston.transports.File({
+// 			filename: 'logfile.log'
+// 		})
+// 	]
+// });
+
+// const p = Promise.reject(new Error('Something failed miserably.'));
+// p.then(() => console.log('Done'));
+
+// winston.add(winston.transports.File, {
+// 	filename: 'logfile.log'
+// });
